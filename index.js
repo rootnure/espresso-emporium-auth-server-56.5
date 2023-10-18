@@ -88,9 +88,17 @@ async function run() {
         // user related api's
         app.post('/user', async (req, res) => {
             const user = req.body;
-            console.log(user);
             const result = await userCollection.insertOne(user);
             res.send(result);
+        })
+
+        app.get('/user', async (req, res) => {
+            const options = {
+                projection: { _id: 1, name: 1, email: 1, createAt: 1 }
+            }
+            const cursor = userCollection.find({}, options);
+            const users = await cursor.toArray();
+            res.send(users);
         })
 
 
