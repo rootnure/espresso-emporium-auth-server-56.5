@@ -94,11 +94,24 @@ async function run() {
 
         app.get('/user', async (req, res) => {
             const options = {
-                projection: { _id: 1, name: 1, email: 1, createAt: 1 }
+                projection: { encryptedPassword: 0 }
             }
             const cursor = userCollection.find({}, options);
             const users = await cursor.toArray();
+            console.log(users[users.length - 1]);
             res.send(users);
+        })
+
+        app.patch('/user', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const userUpdate = {
+                $set: {
+                    lastLoggedAt: user.lastLoggedAt
+                }
+            }
+            const result = await userCollection.updateOne(filter, userUpdate);
+            res.send(result);
         })
 
         app.delete('/user/:id', async (req, res) => {
