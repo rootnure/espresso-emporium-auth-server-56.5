@@ -25,15 +25,14 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const coffeeCollection = client.db("coffeeDB").collection('coffee');
         const userCollection = client.db("coffeeDB").collection('user');
 
         app.post('/coffee', async (req, res) => {
             const newCoffee = req.body;
-            console.log(newCoffee);
-
+            // console.log(newCoffee);
             const result = await coffeeCollection.insertOne(newCoffee);
             res.send(result);
         })
@@ -43,7 +42,8 @@ async function run() {
             const options = {
                 projection: { _id: 1, name: 1, photo: 1, chef: 1, price: 1 }
             }
-            const cursor = coffeeCollection.find({}, options);
+            // const cursor = coffeeCollection.find({}, options);
+            const cursor = coffeeCollection.find();
             const result = await cursor.toArray();
             res.send(result);
         })
@@ -78,7 +78,7 @@ async function run() {
 
         app.delete('/coffee/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id);
+            // console.log(id);
             const query = { _id: new ObjectId(id) }
             const result = await coffeeCollection.deleteOne(query);
             res.send(result);
@@ -98,7 +98,7 @@ async function run() {
             }
             const cursor = userCollection.find({}, options);
             const users = await cursor.toArray();
-            console.log(users[users.length - 1]);
+            // console.log(users[users.length - 1]);
             res.send(users);
         })
 
@@ -123,7 +123,7 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
@@ -136,7 +136,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Server is running...');
+    res.send({
+        msg: 'Server is running...'
+    });
 });
 
 app.listen(port, () => {
